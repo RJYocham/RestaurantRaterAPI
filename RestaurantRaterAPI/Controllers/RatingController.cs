@@ -77,11 +77,30 @@ namespace RestaurantRaterAPI.Controllers
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
-                return NotFond();
+                return NotFound();
             }
             return BadRequest(ModelState);
         }
 
         //delete rating
+        [HttpDelete]
+        public async Task<IHttpActionResult> DeleteRating(int id)
+        {
+            Rating rating = await _context.Ratings.FindAsync(id);
+
+            if(rating == null)
+            {
+                return NotFound();
+            }
+
+            _context.Ratings.Remove(rating);
+
+            if(await _context.SaveChangesAsync() == 1)
+            {
+                return Ok("The rating was successfully deleted");
+            }
+
+            return InternalServerError();
+        }
     }
 }
